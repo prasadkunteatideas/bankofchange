@@ -39,17 +39,17 @@ public class ChangeMachine {
 		return validDenominations.contains(denomination);
 	}
 	public Map<Integer, Integer> getChange(final Integer myNote) {
-		TreeMap<Integer, Integer> returnedChange=new TreeMap<Integer, Integer>();
 		if(!isDenominationValid(myNote)){
-			returnedChange.put(myNote, 1);
+			return returnIncomingNote(myNote);
 		}
+		TreeMap<Integer, Integer> returnedChange=new TreeMap<Integer, Integer>();
 		Map<Integer, Integer> clonedDenominationMap=cloneOriginalDenominationState();
 		Integer incomingAmount=myNote;
+		
 		for (Integer denomination : denominationMap.keySet()) {
 			Integer availableNotesForThisDenomination = denominationMap.get(denomination);
-			if(denomination < myNote && availableNotesForThisDenomination>0){
-				int numberOfNotesExpectedToReturn=incomingAmount/denomination;
-				int numberOfNotesToReturn=numberOfNotesExpectedToReturn<availableNotesForThisDenomination?numberOfNotesExpectedToReturn:availableNotesForThisDenomination;
+			if(canChangeBeGivenFromThisDenomination(myNote, denomination, availableNotesForThisDenomination)){
+				int numberOfNotesToReturn = numberOfNotesToReturnForThisDenomination(incomingAmount, denomination,availableNotesForThisDenomination);
 				returnedChange.put(denomination, numberOfNotesToReturn);
 				incomingAmount=incomingAmount-(denomination*numberOfNotesToReturn);
 				denominationMap.put(denomination, availableNotesForThisDenomination-numberOfNotesToReturn);
@@ -58,12 +58,28 @@ public class ChangeMachine {
 				break;
 		}
 		if(incomingAmount!=0){
-			returnedChange=new TreeMap<Integer, Integer>();
-			returnedChange.put(myNote, 1);
 			denominationMap=(TreeMap<Integer, Integer>) clonedDenominationMap;
+			return returnIncomingNote(myNote);
 		}
 		return returnedChange;
 	}
+	
+	private TreeMap<Integer, Integer> returnIncomingNote(final Integer myNote) {
+		TreeMap<Integer, Integer> returnedChange=new TreeMap<Integer, Integer>();
+		returnedChange.put(myNote, 1);
+		return returnedChange;
+	}
+	
+	private boolean canChangeBeGivenFromThisDenomination(final Integer myNote, Integer denomination, Integer availableNotesForThisDenomination) {
+		return denomination < myNote && availableNotesForThisDenomination>0;
+	}
+
+	private int numberOfNotesToReturnForThisDenomination(Integer incomingAmount, Integer denomination, Integer availableNotesForThisDenomination) {
+		int numberOfNotesExpectedToReturn=incomingAmount/denomination;
+		int numberOfNotesToReturn=numberOfNotesExpectedToReturn<availableNotesForThisDenomination?numberOfNotesExpectedToReturn:availableNotesForThisDenomination;
+		return numberOfNotesToReturn;
+	}
+	
 	private Map<Integer, Integer> cloneOriginalDenominationState() {
 		Map<Integer, Integer> clonedMap=new TreeMap<Integer, Integer>();
 		for (Integer denomination : denominationMap.descendingKeySet()) {
@@ -71,6 +87,7 @@ public class ChangeMachine {
 		}
 		return clonedMap;
 	}
+	
 	public List<Integer> getFinishedDenominations() {
 		List<Integer> finishedDenominations=new ArrayList<Integer>();
 		for (Integer denomination : denominationMap.descendingKeySet()) {
