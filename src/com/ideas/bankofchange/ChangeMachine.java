@@ -1,6 +1,7 @@
 package com.ideas.bankofchange;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -8,17 +9,8 @@ import java.util.TreeMap;
 
 public class ChangeMachine {
 	private TreeMap<Integer, Integer> denominationMap=new TreeMap<Integer, Integer>(Collections.reverseOrder());
-	private static final List<Integer> validDenominations=new ArrayList<Integer>();
-	public ChangeMachine() {
-		validDenominations.add(1000);
-		validDenominations.add(100);
-		validDenominations.add(50);
-		validDenominations.add(20);
-		validDenominations.add(10);
-		validDenominations.add(5);
-		validDenominations.add(2);
-		validDenominations.add(1);
-	}
+	private static final List<Integer> validDenominations= Arrays.asList(1000, 100, 50, 20, 10, 5, 2, 1);
+
 	public Map<Integer, Integer> getCurrentDenominationsSituation() {
 		return denominationMap;
 	}
@@ -35,9 +27,7 @@ public class ChangeMachine {
 		}
 		return validDenominationsLoaded;
 	}
-	private boolean isDenominationValid(Integer denomination) {
-		return validDenominations.contains(denomination);
-	}
+
 	public Map<Integer, Integer> getChange(final Integer myNote) {
 		if(!isDenominationValid(myNote)){
 			return returnIncomingNote(myNote);
@@ -64,6 +54,19 @@ public class ChangeMachine {
 		return returnedChange;
 	}
 	
+	public List<Integer> getFinishedDenominations() {
+		List<Integer> finishedDenominations=new ArrayList<Integer>();
+		for (Integer denomination : denominationMap.descendingKeySet()) {
+			if(denominationMap.get(denomination)==0)
+				finishedDenominations.add(denomination);
+		}
+		return finishedDenominations;
+	}
+	
+	private boolean isDenominationValid(Integer denomination) {
+		return validDenominations.contains(denomination);
+	}
+
 	private TreeMap<Integer, Integer> returnIncomingNote(final Integer myNote) {
 		TreeMap<Integer, Integer> returnedChange=new TreeMap<Integer, Integer>();
 		returnedChange.put(myNote, 1);
@@ -88,13 +91,4 @@ public class ChangeMachine {
 		return clonedMap;
 	}
 	
-	public List<Integer> getFinishedDenominations() {
-		List<Integer> finishedDenominations=new ArrayList<Integer>();
-		for (Integer denomination : denominationMap.descendingKeySet()) {
-			if(denominationMap.get(denomination)==0)
-				finishedDenominations.add(denomination);
-		}
-		return finishedDenominations;
-	}
-
 }
