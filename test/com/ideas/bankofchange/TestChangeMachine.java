@@ -36,47 +36,70 @@ public class TestChangeMachine {
 		Integer myNote=new Integer(100);
 		Map<Integer, Integer> changeMap=changeMachine.getChange(myNote);
 		assertTrue(2==changeMap.get(50));
-		Map<Integer, Integer> currentDenominations=changeMachine.getCurrentDenominationsSituation();
-		assertTrue(1==currentDenominations.get(100));
-		assertTrue(0==currentDenominations.get(50));
-		assertTrue(3==currentDenominations.get(20));
-		assertTrue(4==currentDenominations.get(10));
 		
 		myNote=new Integer(50);
 		changeMap=changeMachine.getChange(myNote);
 		assertTrue(2==changeMap.get(20));
 		assertTrue(1==changeMap.get(10));
-		currentDenominations=changeMachine.getCurrentDenominationsSituation();
-		assertTrue(1==currentDenominations.get(100));
-		assertTrue(0==currentDenominations.get(50));
-		assertTrue(1==currentDenominations.get(20));
-		assertTrue(3==currentDenominations.get(10));
 		
 
 		myNote=new Integer(100);
 		changeMap=changeMachine.getChange(myNote);
 		assertTrue(1==changeMap.get(100));
-		currentDenominations=changeMachine.getCurrentDenominationsSituation();
-		assertTrue(1==currentDenominations.get(100));
-		assertTrue(0==currentDenominations.get(50));
-		assertTrue(1==currentDenominations.get(20));
-		assertTrue(3==currentDenominations.get(10));
-		
 
 		myNote=new Integer(20);
 		changeMap=changeMachine.getChange(myNote);
 		assertTrue(2==changeMap.get(10));
-		currentDenominations=changeMachine.getCurrentDenominationsSituation();
+	}
+	
+	
+	@Test
+	public void testHasMachineReducedTheDenomincationsCountAfterChange(){
+		loadDenominations();
+		Integer myNote=new Integer(100);
+		changeMachine.getChange(myNote);
+
+		myNote=new Integer(50);
+		changeMachine.getChange(myNote);
+		
+
+		myNote=new Integer(100);
+		changeMachine.getChange(myNote);
+		
+
+		myNote=new Integer(20);
+		changeMachine.getChange(myNote);
+		Map<Integer, Integer> currentDenominations = changeMachine.getCurrentDenominationsSituation();
 		assertTrue(1==currentDenominations.get(100));
 		assertTrue(0==currentDenominations.get(50));
 		assertTrue(1==currentDenominations.get(20));
 		assertTrue(1==currentDenominations.get(10));
 		
+	}	
+	
+	@Test
+	public void testIsSystemGivingFinishedDenominations(){
+		loadDenominations();
+		Integer myNote=new Integer(100);
+		changeMachine.getChange(myNote);
+
+		myNote=new Integer(50);
+		changeMachine.getChange(myNote);
+		
+
+		myNote=new Integer(100);
+		changeMachine.getChange(myNote);
+		
+
+		myNote=new Integer(20);
+		changeMachine.getChange(myNote);
+		
 		List<Integer> finishedDeniminations=changeMachine.getFinishedDenominations();
 		assertEquals(1, finishedDeniminations.size());
 		assertEquals(50, finishedDeniminations.get(0).intValue());
 		
-	}
+	}	
+
 	
 	@Test
 	public void testReturnIfMyNoteIsAnInvalidNote(){
@@ -87,7 +110,7 @@ public class TestChangeMachine {
 	}
 
 	@Test
-	public void testLoadNotesForSameDenominationsMultipleTimes(){
+	public void test_Notes_Are_Correctly_Loaded_For_Same_Denominations_Multiple_Times(){
 		changeMachine = new ChangeMachine();
 		Map<Integer, Integer> myDenominationMap=new HashMap<Integer, Integer>();
 		myDenominationMap.put(100, 1);
